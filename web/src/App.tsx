@@ -154,7 +154,7 @@ export default function App() {
         </div>
         <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2 md:gap-3">
           <button onClick={() => setExamsOpen(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black md:hidden">{t(T.exams)}</button>
-          <button onClick={() => setAbout(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black">{t(T.about)}</button>
+          <button onClick={() => setAbout(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black" aria-label={t(T.about)}><span className="md:hidden">?</span><span className="hidden md:inline">{t(T.about)}</span></button>
           <div className="label flex gap-2">
             {(["en", "es"] as Lang[]).map((l) => (
               <button key={l} onClick={() => setLang(l)} className={l === lang ? "opacity-100" : "opacity-40 hover:opacity-100"}>{l}</button>
@@ -225,7 +225,7 @@ export default function App() {
           <button onClick={() => { if (c >= total) chars.current = 0; setPlaying(!playing); }} className="h-10 w-10 shrink-0 rounded-full bg-white text-lg text-black" aria-label="play">{playing ? "❚❚" : "▶"}</button>
           {SPEEDS.map((sp, i) => (
             <button key={sp} onClick={() => { setSpeedIdx(i); setPlaying(true); }}
-              className={`shrink-0 rounded-full px-3 py-1.5 font-mono text-xs ${i === speedIdx ? "bg-white text-black" : "border border-white/20 text-white/70 hover:border-white/60"}`}>
+              className={`shrink-0 rounded-full px-2.5 py-1.5 font-mono text-xs md:px-3 ${i === speedIdx ? "bg-white text-black" : "border border-white/20 text-white/70 hover:border-white/60"}`}>
               ×{fmtInt(sp, es)}
             </button>
           ))}
@@ -373,6 +373,11 @@ function About({ lang, run, onClose }: { lang: Lang; run: Run; onClose: () => vo
   const es = lang === "es";
   const m = run.meta;
   const n = (v: number | undefined) => fmtInt(v ?? 0, es);
+  const last = (cps: { bpc: number }[]) => cps[cps.length - 1].bpc;
+  const real = run.books.find((b) => b.id === "shakespeare") ?? run.books[0];
+  const ctrl = run.controls?.[0];
+  const rb = last(real.checkpoints), cb = ctrl ? last(ctrl.checkpoints) : null;
+  const same = cb !== null && Math.abs(rb - cb) < 0.05;
   return (
     <Modal onClose={onClose} lang={lang} title={T.about[lang]}>
       <div className="space-y-3 text-[15px] leading-relaxed text-white/75">
@@ -382,6 +387,9 @@ function About({ lang, run, onClose }: { lang: Lang; run: Run; onClose: () => vo
             <p><b>Cómo lee:</b> cada letra activa un grupo de sus {n(m.inputs)} neuronas olfativas (la mosca "huele" las letras, el camino principal hacia su centro de memoria). La actividad recorre el cerebro capa por capa, así que las capas profundas recuerdan las letras anteriores.</p>
             <p><b>Cómo aprende:</b> como en una mosca real, el cableado no cambia. Lo único que se ajusta son las conexiones que salen de sus {n(m.kenyon)} células de Kenyon, en el cuerpo fungiforme, donde las moscas guardan lo que aprenden.</p>
             <p><b>Cómo lo medimos:</b> en textos del libro que nunca leyó, cuánto la sorprende cada letra. 0% es teclear al azar y 100% es lo que logra una persona (~1 bit por letra). La línea punteada es el mismo cerebro con los cables mezclados al azar.</p>
+            {m.done && cb !== null && (
+              <p><b>El resultado:</b> la mosca aprendió algo real: pasó de teclear al azar ({m.bpcRandom.toFixed(2)} bits) a {rb.toFixed(2)} bits por letra con {real.title}, escribe palabras que existen y reconoce a cada autor. Pero {same ? <>el mismo cerebro con los cables mezclados al azar aprendió <b>lo mismo</b> ({cb.toFixed(2)} bits). O sea: lo que aprende sale del tamaño y la dinámica de la red, no de cómo está cableada la mosca de verdad.</> : <>con los cables mezclados al azar llegó a {cb.toFixed(2)} bits, así que el cableado real {rb < cb ? "ayuda" : "no ayuda"}.</>}</p>
+            )}
             <p><b>Lo que no es:</b> una mosca real no lee. Esto mide qué tan bien el cableado de un cerebro de mosca puede aprender texto. El experimento corrió una vez y la página lo reproduce; el reloj supone que lee a ritmo humano ({m.charsPerSecond} letras por segundo).</p>
             <p className="text-white/45">Datos: FlyWire FAFB v783 (Dorkenwald et al., Schlegel et al., Nature 2024). Libros: Project Gutenberg. * "Nunca" en la práctica: el número de años es finito, pero supera por mucho la edad del universo.</p>
           </>
@@ -391,6 +399,9 @@ function About({ lang, run, onClose }: { lang: Lang; run: Run; onClose: () => vo
             <p><b>How it reads:</b> each letter activates a group of its {n(m.inputs)} olfactory neurons (the fly "smells" the letters, the main route to its memory centre). Activity flows through the brain layer by layer, so deeper layers remember the previous letters.</p>
             <p><b>How it learns:</b> as in a real fly, the wiring never changes. Only the connections leaving its {n(m.kenyon)} Kenyon cells are adjusted, in the mushroom body, where flies store what they learn.</p>
             <p><b>How we measure it:</b> on passages of the book it never read, how surprised it is by each letter. 0% is random typing and 100% is what a person achieves (~1 bit per letter). The dashed line is the same brain with its wires shuffled at random.</p>
+            {m.done && cb !== null && (
+              <p><b>The result:</b> the fly learned something real: it went from random typing ({m.bpcRandom.toFixed(2)} bits) to {rb.toFixed(2)} bits per letter on {real.title}, writes words that exist and recognises each author. But {same ? <>the same brain with its wires shuffled at random learned <b>just as much</b> ({cb.toFixed(2)} bits). So what it learns comes from the size and dynamics of the network, not from the fly's actual wiring.</> : <>with shuffled wires it reached {cb.toFixed(2)} bits, so the real wiring {rb < cb ? "helps" : "doesn't help"}.</>}</p>
+            )}
             <p><b>What it isn't:</b> a real fly doesn't read. This measures how well the wiring of a fly brain can learn text. The experiment ran once and the page replays it; the clock assumes human reading speed ({m.charsPerSecond} letters per second).</p>
             <p className="text-white/45">Data: FlyWire FAFB v783 (Dorkenwald et al., Schlegel et al., Nature 2024). Books: Project Gutenberg. * "Never" in practice: the number of years is finite, but far beyond the age of the universe.</p>
           </>
