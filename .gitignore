@@ -2,9 +2,9 @@
 node_modules/
 web/node_modules/
 web/dist/
-data/
-books/
-logs/
+/data/
+/books/
+/logs/
 *.tmp
 .DS_Store
 web/public/data/*.tmp
