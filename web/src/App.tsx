@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { FlyScene } from "./scene";
 import { LOG10_UNIVERSE, at, firstWhen, fmtDuration, fmtInt, log10YearsToWrite, pct, totalChars, type Book, type Checkpoint, type Run } from "./data";
 import { mockRun } from "./mock";
 
+const Lab = lazy(() => import("./lab/Lab"));
 const SPEEDS = [1, 10, 100, 1000, 10000];
 const PAGE = 430; // letras por página dibujada
 const COLORS: Record<string, string> = { shakespeare: "#f4f4f2", quijote: "#f2c46d", fierro: "#7cc3f0", dante: "#f08a8a" };
@@ -28,6 +29,8 @@ const T = {
   running: { en: "Real experiment running", es: "Experimento real en curso" },
   real: { en: "Real FlyWire brain", es: "Cerebro real de FlyWire" },
   about: { en: "How does it work?", es: "¿Cómo funciona?" },
+  lab: { en: "Lab: live · lesions · dream", es: "Laboratorio: en vivo · lesiones · sueño" },
+  labShort: { en: "Lab", es: "Lab" },
   exams: { en: "Exams", es: "Exámenes" },
   close: { en: "Close", es: "Cerrar" },
   watching: { en: "Watching", es: "Mirando" },
@@ -50,6 +53,7 @@ export default function App() {
   const [playing, setPlaying] = useState(true);
   const [about, setAbout] = useState(false);
   const [examsOpen, setExamsOpen] = useState(false);
+  const [labOpen, setLabOpen] = useState(() => location.hash === "#lab");
   const [, force] = useState(0);
   const chars = useRef(0);
   const host = useRef<HTMLDivElement>(null);
@@ -102,6 +106,8 @@ export default function App() {
       last = now;
       const s = scene.current;
       if (!s) return;
+      s.paused = labOpen;
+      if (labOpen) return;
       const speed = SPEEDS[speedIdx];
       s.speed = speed;
       s.playing = playing;
@@ -112,7 +118,7 @@ export default function App() {
       const nPages = Math.max(1, Math.floor(book.excerpt.length / PAGE));
       const chunk = (k: number) => { const i = ((k % nPages) + nPages) % nPages; return book.excerpt.slice(i * PAGE, (i + 1) * PAGE); };
       s.setPageNumber(page);
-      if (now - lastUi > 90) {
+      if (now - lastUi > 160) {
         s.setPages(chunk(page - 1), chunk(page), Math.floor(chars.current % PAGE), book.title);
         force((x) => x + 1);
         lastUi = now;
@@ -130,7 +136,7 @@ export default function App() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [run, focus, speedIdx, playing, total]);
+  }, [run, focus, speedIdx, playing, total, labOpen]);
 
   const c = chars.current;
   const seconds = c / run.meta.charsPerSecond;
@@ -153,6 +159,9 @@ export default function App() {
           <p className={`label mt-3 inline-block rounded-full border px-3 py-1 ${status.cls}`}>{status.txt}</p>
         </div>
         <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2 md:gap-3">
+          <button onClick={() => { setLabOpen(true); setPlaying(false); }} className="label rounded-full bg-white px-3 py-1.5 text-black hover:bg-white/85">
+            <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#e5372b] align-middle" /><span className="md:hidden">{t(T.labShort)}</span><span className="hidden md:inline">{t(T.lab)}</span>
+          </button>
           <button onClick={() => setExamsOpen(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black md:hidden">{t(T.exams)}</button>
           <button onClick={() => setAbout(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black" aria-label={t(T.about)}><span className="md:hidden">?</span><span className="hidden md:inline">{t(T.about)}</span></button>
           <div className="label flex gap-2">
@@ -247,6 +256,7 @@ export default function App() {
           <Curve run={run} chars={c} focus={focus} lang={lang} />
         </Modal>
       )}
+      {labOpen && <Suspense fallback={null}><Lab lang={lang} onClose={() => { setLabOpen(false); if (location.hash) history.replaceState(null, "", location.pathname); }} /></Suspense>}
       {about && <About lang={lang} run={run} onClose={() => setAbout(false)} />}
     </div>
   );

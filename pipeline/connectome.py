@@ -117,7 +117,7 @@ def _flywire(rng):
         positions = _brain_cloud(N, rng)
 
     return {"W": W, "inputs": inputs, "outputs_pref": outputs, "viz": viz, "positions": np.nan_to_num(positions),
-            "synapses": synapses, "source": "FlyWire FAFB v783"}
+            "synapses": synapses, "source": "FlyWire FAFB v783", "ids": np.asarray(ids, np.int64)}
 
 
 def _brain_cloud(n, rng):

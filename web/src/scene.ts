@@ -39,7 +39,7 @@ export class FlyScene {
 
   constructor(private host: HTMLElement) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -82,7 +82,7 @@ export class FlyScene {
     lamp.position.set(2.5, 8, 3);
     lamp.target.position.set(0, 0, 0);
     lamp.castShadow = true;
-    lamp.shadow.mapSize.set(2048, 2048);
+    lamp.shadow.mapSize.set(1024, 1024);
     lamp.shadow.bias = -0.0004;
     lamp.shadow.radius = 6;
     this.scene.add(lamp, lamp.target);
@@ -157,10 +157,20 @@ export class FlyScene {
     this.scene.add(this.book);
   }
 
-  /** dibuja el texto de las dos páginas; `cursor` = cuántos caracteres de la derecha ya leyó */
+  private pageKey = ["", ""];
+  private pageLines: string[][] = [[], []];
+  paused = false;
+
+  /** dibuja el texto de las dos páginas; `cursor` = cuántos caracteres de la derecha ya leyó.
+   *  El armado de líneas se calcula una vez por página y cada línea se pinta en 2–3 trozos, no letra por letra. */
   setPages(left: string, right: string, cursor: number, title: string) {
-    const draw = (c: HTMLCanvasElement, txt: string, upto: number, header: string) => {
+    const draw = (side: 0 | 1, c: HTMLCanvasElement, txt: string, upto: number, header: string) => {
+      const key = `${header}|${txt}|${upto}`;
+      if (this.pageKey[side] === key) return false;
       const x = c.getContext("2d")!;
+      x.font = "29px Georgia, serif";
+      if (!this.pageKey[side].startsWith(`${header}|${txt}|`)) this.pageLines[side] = wrap(x, txt, c.width - 120).slice(0, 24);
+      this.pageKey[side] = key;
       x.fillStyle = "#ece8de";
       x.fillRect(0, 0, c.width, c.height);
       x.fillStyle = "#9a958a";
@@ -169,30 +179,34 @@ export class FlyScene {
       x.fillText(header, c.width / 2, 62);
       x.textAlign = "left";
       x.font = "29px Georgia, serif";
-      const lines = wrap(x, txt, c.width - 120);
       let n = 0;
-      lines.slice(0, 24).forEach((ln, i) => {
+      this.pageLines[side].forEach((ln, i) => {
         const y = 128 + i * 38;
-        let px = 60;
-        for (const ch of ln) {
-          const read = upto < 0 || n < upto;
-          const isCursor = n === upto;
-          if (isCursor) {
+        const k = upto < 0 ? ln.length : Math.max(0, Math.min(ln.length, upto - n));
+        const a = ln.slice(0, k), b = ln.slice(k);
+        x.fillStyle = "#1a1a1a";
+        if (a) x.fillText(a, 60, y);
+        const wa = a ? x.measureText(a).width : 0;
+        if (b) {
+          if (upto >= 0 && n + k === upto) {
+            const ch = b[0], wc = x.measureText(ch).width;
             x.fillStyle = "#0a0a0a";
-            x.fillRect(px - 1, y - 27, x.measureText(ch).width + 2, 34);
+            x.fillRect(60 + wa - 1, y - 27, wc + 2, 34);
             x.fillStyle = "#ece8de";
-          } else x.fillStyle = read ? "#1a1a1a" : "#b9b4a8";
-          x.fillText(ch, px, y);
-          px += x.measureText(ch).width;
-          n++;
+            x.fillText(ch, 60 + wa, y);
+            x.fillStyle = "#b9b4a8";
+            if (b.length > 1) x.fillText(b.slice(1), 60 + wa + wc, y);
+          } else {
+            x.fillStyle = "#b9b4a8";
+            x.fillText(b, 60 + wa, y);
+          }
         }
-        n++; // espacio del salto de línea
+        n += ln.length + 1; // +1: espacio del salto de línea
       });
+      return true;
     };
-    draw(this.pageCanvasL, left, -1, title);
-    draw(this.pageCanvasR, right, cursor, title);
-    this.texL.needsUpdate = true;
-    this.texR.needsUpdate = true;
+    if (draw(0, this.pageCanvasL, left, -1, title)) this.texL.needsUpdate = true;
+    if (draw(1, this.pageCanvasR, right, cursor, title)) this.texR.needsUpdate = true;
   }
 
   /** dispara el pase de página si cambió el número */
@@ -425,6 +439,7 @@ export class FlyScene {
 
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
+    if (this.paused) { this.clock.getDelta(); return; }
     const dt = Math.min(this.clock.getDelta(), 0.05);
     const t = this.clock.elapsedTime;
     const sp = this.playing ? this.speed : 0;
