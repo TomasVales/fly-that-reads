@@ -1,0 +1,117 @@
+{
+ "neurons": 127842,
+ "connections": 3670469,
+ "inputs": 2279,
+ "kenyon": 5177,
+ "train": 30000,
+ "books": [
+  {
+   "id": "shakespeare",
+   "title": "Shakespeare"
+  },
+  {
+   "id": "quijote",
+   "title": "Don Quijote"
+  },
+  {
+   "id": "fierro",
+   "title": "Martín Fierro"
+  },
+  {
+   "id": "dante",
+   "title": "Divina Commedia"
+  }
+ ],
+ "groups": {
+  "apl": 2,
+  "alpn": 684,
+  "inhib": 39714,
+  "left": 63013,
+  "optic": 84553,
+  "half": 63921
+ },
+ "aplTargets": [
+  2597,
+  2581
+ ],
+ "results": {
+  "none": {
+   "bpc": [
+    3.5205,
+    3.3944,
+    3.416,
+    3.8038
+   ],
+   "sample": "pr whes m therapan lof wound wh, thy my prifot parth t artol' thomingu pred toust res t hel i faee thespped we anes heimy, in d he pusthey l le ppes ay fr t hes wire my wimy in tt pf t fy thot s imo eighest, t, wis's cor war th al leyendey ",
+   "words": 0.333,
+   "kcActive": 0.2997
+  },
+  "apl": {
+   "bpc": [
+    37.18,
+    14.33,
+    15.2955,
+    8.5526
+   ],
+   "sample": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+   "words": 0.0,
+   "kcActive": 0.8458
+  },
+  "alpn": {
+   "bpc": [
+    15.0239,
+    16.3198,
+    14.1261,
+    13.2834
+   ],
+   "sample": "tt tt ttt rttrrttr tt rttrrtttrjtrrtjrrjtrrttrrttrrttr jtrttt rtt  ttt ttrrjtrttt rtt tjt rtt  ttrrttrstt rtt  jtrrjt rttrrtt  tt  ttrtttrrttr jtrrtt tttr ttd tttrtt rtttrtt rtjrttt  tj uttrtttr ttr tt tttrrtt  ttrrtj rttt ttr jj  ttttttrtj",
+   "words": 0.0,
+   "kcActive": 0.0
+  },
+  "inhib": {
+   "bpc": [
+    37.1889,
+    14.3311,
+    15.3094,
+    8.5589
+   ],
+   "sample": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+   "words": 0.0,
+   "kcActive": 0.9344
+  },
+  "left": {
+   "bpc": [
+    11.8096,
+    14.8259,
+    13.9456,
+    11.5351
+   ],
+   "sample": " t t                   tt    t     t     r               t           t  t    t                        t     t                       t    t            t          t     t t        t    t  t                 p      t         t           tt   t ",
+   "words": 0.0,
+   "kcActive": 0.0965
+  },
+  "optic": {
+   "bpc": [
+    3.522,
+    3.3974,
+    3.4011,
+    3.7989
+   ],
+   "sample": "pr wherea thes ie e. ghyrin ey artht my st, then thofof tould poue ppt is m sthte t, ar, hid and permy. the we anes hee'sthear d heay they me e ppart whever igimy she's wimy in tt shat guevest s imo ee ththe te wiseaaled war. f an thyssest ",
+   "words": 0.378,
+   "kcActive": 0.2997
+  },
+  "half": {
+   "bpc": [
+    16.1624,
+    14.477,
+    14.1873,
+    14.7153
+   ],
+   "sample": "tttttttttttttttttttttttttttttttttttttttjtttttttttttttttttttttdtttttttttttttdtttttttttttttttttdttttttttttttttttttttttttttttttttjtttttttttttttttttttttttttttjtttttttttttttttttttttdtttttttdtttttttttdtttrtttttttttttdtttttsttttttttttttttttttttttd",
+   "words": 0.0,
+   "kcActive": 0.0001
+  }
+ },
+ "bpcRandom": 5.5546
+}
