@@ -154,16 +154,16 @@ export default function App() {
       {/* título */}
       <header className="pointer-events-none absolute left-0 top-0 flex w-full items-start justify-between gap-4 p-4 md:p-7">
         <div className="max-w-md">
-          <h1 className="text-3xl font-medium tracking-[-0.04em] md:text-5xl">{t(T.title)}</h1>
-          <p className="mt-2 hidden text-sm text-white/60 sm:block md:text-base">{t(T.sub)}</p>
+          <h1 className="text-3xl font-medium tracking-[-0.04em] sm:text-4xl desk:text-5xl short:text-3xl">{t(T.title)}</h1>
+          <p className="mt-2 hidden text-sm text-white/60 sm:block desk:text-base short:hidden">{t(T.sub)}</p>
           <p className={`label mt-3 inline-block rounded-full border px-3 py-1 ${status.cls}`}>{status.txt}</p>
         </div>
         <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2 md:gap-3">
           <button onClick={() => { setLabOpen(true); setPlaying(false); }} className="label rounded-full bg-white px-3 py-1.5 text-black hover:bg-white/85">
-            <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#e5372b] align-middle" /><span className="md:hidden">{t(T.labShort)}</span><span className="hidden md:inline">{t(T.lab)}</span>
+            <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#e5372b] align-middle" /><span className="desk:hidden">{t(T.labShort)}</span><span className="hidden desk:inline">{t(T.lab)}</span>
           </button>
-          <button onClick={() => setExamsOpen(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black md:hidden">{t(T.exams)}</button>
-          <button onClick={() => setAbout(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black" aria-label={t(T.about)}><span className="md:hidden">?</span><span className="hidden md:inline">{t(T.about)}</span></button>
+          <button onClick={() => setExamsOpen(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black desk:hidden">{t(T.exams)}</button>
+          <button onClick={() => setAbout(true)} className="label rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black" aria-label={t(T.about)}><span className="desk:hidden">?</span><span className="hidden desk:inline">{t(T.about)}</span></button>
           <div className="label flex gap-2">
             {(["en", "es"] as Lang[]).map((l) => (
               <button key={l} onClick={() => setLang(l)} className={l === lang ? "opacity-100" : "opacity-40 hover:opacity-100"}>{l}</button>
@@ -173,7 +173,7 @@ export default function App() {
       </header>
 
       {/* exámenes (escritorio) */}
-      <section className="thin-scroll absolute left-7 top-48 hidden max-h-[calc(100svh-17rem)] w-[19rem] overflow-y-auto rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-md md:block">
+      <section className="thin-scroll absolute left-7 top-48 hidden max-h-[calc(100svh-17rem)] w-[19rem] overflow-y-auto rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-md desk:block">
         <p className="label text-white/50">{t(T.watching)} · {fb.title}</p>
         <dl className="mt-3 space-y-1.5 text-sm">
           <Row k={t(T.study)} v={fmtDuration(seconds, es)} />
@@ -192,30 +192,30 @@ export default function App() {
       </section>
 
       {/* carrera + curva */}
-      <aside className="absolute bottom-[7.5rem] right-3 w-[min(400px,calc(100%-24px))] space-y-2 md:bottom-auto md:right-7 md:top-1/2 md:-translate-y-1/2">
+      <aside className="absolute inset-x-3 bottom-[7.5rem] grid gap-2 sm:grid-cols-2 md:bottom-24 short:left-auto short:top-16 short:bottom-20 short:w-[300px] short:grid-cols-1 short:content-center desk:left-auto desk:right-7 desk:top-24 desk:bottom-28 desk:flex desk:w-[400px] desk:flex-col desk:justify-center">
         {run.books.map((b, i) => {
           const st = at(b, c);
           const p = pct(run, st.bpc);
           const done = c >= finish[i];
           return (
             <button key={b.id} onClick={() => setFocus(i)}
-              className={`block w-full rounded-2xl border p-3 text-left backdrop-blur-md transition-colors ${i === focus ? "border-white/60 bg-white/10" : "border-white/10 bg-black/45 hover:border-white/30"}`}>
+              className={`block w-full rounded-2xl border p-3 text-left short:py-2 backdrop-blur-md transition-colors ${i === focus ? "border-white/70 bg-black/60" : "border-white/10 bg-black/45 hover:border-white/30"}`}>
               <div className="flex items-baseline justify-between gap-3">
                 <span className="flex min-w-0 items-baseline gap-2 truncate text-sm font-medium">
                   <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: COLORS[b.id] ?? "#fff" }} />
                   {b.title}<span className="truncate font-normal text-white/50">· {SHORT[b.id]?.[lang] ?? b.author}</span>
                 </span>
-                <span className="font-mono text-sm tabular-nums">{p.toFixed(1)}%{done && i === winner ? " 🏆" : ""}</span>
+                <span className="shrink-0 whitespace-nowrap font-mono text-sm tabular-nums">{p.toFixed(1)}%{done && i === winner ? " 🏆" : ""}</span>
               </div>
               <div className="relative mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
                 <div className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-200" style={{ width: `${p}%`, background: COLORS[b.id] ?? "#fff" }} />
                 <div className="absolute inset-y-0 w-px bg-white/70" style={{ left: `${target}%` }} title={t(T.goal)} />
               </div>
-              <p className="mt-2 hidden truncate font-serif text-[15px] italic text-white/80 sm:block">“{st.cp.sample}<span className="animate-pulse">▍</span>”</p>
+              <p className="mt-2 hidden truncate font-serif text-[15px] italic text-white/80 sm:block short:hidden">“{st.cp.sample}<span className="animate-pulse">▍</span>”</p>
             </button>
           );
         })}
-        <div className="hidden rounded-2xl border border-white/10 bg-black/45 p-3 backdrop-blur-md md:block">
+        <div className="hidden rounded-2xl border border-white/10 bg-black/45 p-3 backdrop-blur-md tall:block">
           <p className="label mb-2 text-white/50">{t(T.curve)}</p>
           <Curve run={run} chars={c} focus={focus} lang={lang} />
         </div>
@@ -223,13 +223,13 @@ export default function App() {
 
       {/* ganador */}
       {winner >= 0 && c >= finish[winner] && (
-        <div className="pointer-events-none absolute left-1/2 top-[22%] hidden -translate-x-1/2 rounded-full border border-white/30 bg-black/60 px-5 py-2 text-center backdrop-blur-md md:block">
+        <div className="pointer-events-none absolute left-[22rem] right-[28rem] top-[22%] mx-auto hidden w-fit rounded-2xl border border-white/30 bg-black/60 px-5 py-2 text-center text-sm backdrop-blur-md desk:block">
           🏆 <b>{run.books[winner].title}</b> {t(T.won)} · {target}% · {fmtDuration(finish[winner] / run.meta.charsPerSecond, es)}
         </div>
       )}
 
       {/* controles */}
-      <footer className="absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-white/10 bg-black/60 p-3 backdrop-blur-md md:flex-row md:items-center md:px-7 md:py-4">
+      <footer className="absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-white/10 bg-black/60 p-3 backdrop-blur-md md:flex-row md:items-center md:px-5 desk:px-7 desk:py-4">
         <div className="flex items-center gap-1.5 overflow-x-auto md:gap-2">
           <button onClick={() => { if (c >= total) chars.current = 0; setPlaying(!playing); }} className="h-10 w-10 shrink-0 rounded-full bg-white text-lg text-black" aria-label="play">{playing ? "❚❚" : "▶"}</button>
           {SPEEDS.map((sp, i) => (
@@ -241,7 +241,7 @@ export default function App() {
           <button onClick={() => { chars.current = total; force((x) => x + 1); }} className="shrink-0 rounded-full border border-white/20 px-3 py-1.5 font-mono text-xs text-white/70 hover:border-white/60" aria-label="end">⏭</button>
         </div>
         <input type="range" min={0} max={total} step={1} value={c} onChange={(e) => { chars.current = +e.target.value; force((x) => x + 1); }} className="w-full accent-white md:flex-1" />
-        <span className="hidden font-mono text-xs tabular-nums text-white/60 md:block md:w-40 md:text-right">{fmtDuration(seconds, es)}</span>
+        <span className="hidden font-mono text-xs tabular-nums text-white/60 md:block md:w-28 md:text-right desk:w-40">{fmtDuration(seconds, es)}</span>
       </footer>
 
       {examsOpen && (

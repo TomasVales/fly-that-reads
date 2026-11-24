@@ -209,9 +209,9 @@ export default function Lab({ lang, onClose }: { lang: Lang; onClose: () => void
         <button onClick={onClose} aria-label="close" className="label shrink-0 rounded-full border border-white/25 px-3 py-1.5 hover:bg-white hover:text-black">✕</button>
       </header>
 
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+      <div className="flex min-h-0 flex-1 flex-col side:flex-row">
         {/* cerebro */}
-        <div className="relative h-[38svh] shrink-0 md:h-auto md:flex-[1.25]">
+        <div className="relative h-[38svh] shrink-0 side:h-auto side:flex-[1.25]">
           <div ref={host} className="absolute inset-0" />
           {!ready && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center">
@@ -222,7 +222,7 @@ export default function Lab({ lang, onClose }: { lang: Lang; onClose: () => void
             </div>
           )}
           {ready && (
-            <div className="label pointer-events-none absolute bottom-3 left-4 flex flex-wrap gap-x-4 gap-y-1 text-white/50 md:bottom-5 md:left-7">
+            <div className="label pointer-events-none absolute bottom-3 left-4 flex md:left-7 flex-wrap gap-x-4 gap-y-1 text-white/50 side:bottom-5">
               <span><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-[#73b8f2]" />{es ? "olfato" : "smell"}</span>
               <span><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-[#f2b85a]" />Kenyon</span>
               {lesions.length > 0 && <span><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-[#e5372b]" />{es ? "apagadas" : "silenced"}</span>}
@@ -232,7 +232,7 @@ export default function Lab({ lang, onClose }: { lang: Lang; onClose: () => void
         </div>
 
         {/* panel */}
-        <div className="thin-scroll flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto border-white/10 p-4 md:max-w-[560px] md:border-l md:p-7">
+        <div className="thin-scroll flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto border-white/10 p-4 side:max-w-[560px] side:border-l md:p-7">
           <p className="text-[15px] leading-relaxed text-white/65">{intro[tab]}</p>
 
           {tab === "write" && (

@@ -434,6 +434,12 @@ export class FlyScene {
     this.camera.aspect = w / h;
     // en pantallas angostas, alejar la cámara
     this.camera.fov = w < 700 ? 46 : 32;
+    // fuera del diseño de escritorio, correr la escena hacia donde no hay tarjetas
+    const desk = w >= 1100 && h >= 680;
+    if (desk) this.camera.clearViewOffset();
+    else if (h <= 520 && w > h) this.camera.setViewOffset(w, h, w * 0.17, 0, w, h);
+    else if (w < 700) this.camera.setViewOffset(w, h, w * 0.08, h * 0.2, w, h);
+    else this.camera.setViewOffset(w, h, 0, h * 0.14, w, h);
     this.camera.updateProjectionMatrix();
   };
 

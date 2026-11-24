@@ -117,7 +117,7 @@ export class BrainView {
     this.renderer.domElement.style.width = "100%";
     this.renderer.domElement.style.height = "100%";
     this.camera.aspect = w / h;
-    this.camera.position.setLength(w / h < 1 ? 3.6 : 2.75);
+    this.camera.position.setLength(Math.max(2.75, (2.75 * 1.25 * h) / w)); // columnas angostas: alejar para que entre el cerebro
     this.camera.updateProjectionMatrix();
   }
 

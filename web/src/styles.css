@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* diseño de escritorio solo cuando entran los paneles laterales; "short" = celular horizontal */
+@custom-variant desk (@media (min-width: 1100px) and (min-height: 680px));
+@custom-variant tall (@media (min-width: 1100px) and (min-height: 820px));
+@custom-variant short (@media (max-height: 520px) and (orientation: landscape));
+@custom-variant side (@media (min-width: 768px) and (orientation: landscape));
+
 @theme {
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;
